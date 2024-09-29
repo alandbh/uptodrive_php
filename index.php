@@ -3,7 +3,11 @@ require 'vendor/autoload.php';
 
 ini_set('memory_limit', '-1');
 set_time_limit(120);
+header('Access-Control-Allow-Origin: *');
 
+header('Access-Control-Allow-Methods: GET, POST');
+
+header("Access-Control-Allow-Headers: X-Requested-With");
 
 
 use Google\Client;
@@ -51,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
         'parents' => [$folderId]
     ]);
 
-    // print_r($_FILES['file']);
+    print_r( $fileMetadata);
 
     $content = file_get_contents($fileTmpPath);
 
