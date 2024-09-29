@@ -53,25 +53,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
 
     print_r($_FILES['file']);
 
-    // $content = file_get_contents($fileTmpPath);
+    $content = file_get_contents($fileTmpPath);
 
-    // $uploadedFile = $service->files->create($fileMetadata, [
-    //     'data' => $content,
-    //     'mimeType' => mime_content_type($fileTmpPath),
-    //     'uploadType' => 'multipart',
-    //     'fields' => 'id, name',
-    // ]);
+    $uploadedFile = $service->files->create($fileMetadata, [
+        'data' => $content,
+        'mimeType' => mime_content_type($fileTmpPath),
+        'uploadType' => 'multipart',
+        'fields' => 'id, name',
+    ]);
 
-    // $result_json = array('fileId' => $uploadedFile->id, 'fileName'=> $uploadedFile->name);
+    $result_json = array('fileId' => $uploadedFile->id, 'fileName'=> $uploadedFile->name);
 
 
-    // // headers to tell that result is JSON
-    // header('Content-type: application/json');
+    // headers to tell that result is JSON
+    header('Content-type: application/json');
 
-    // // send the result now
-    // echo json_encode($result_json);
+    // send the result now
+    echo json_encode($result_json);
 
-    // echo 'Arquivo enviado: ' . $uploadedFile->id;
+    echo 'Arquivo enviado: ' . $uploadedFile->id;
 } else {
     echo 'Nenhum arquivo foi enviado.';
 }
