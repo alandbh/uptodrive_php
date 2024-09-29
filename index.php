@@ -2,7 +2,7 @@
 require 'vendor/autoload.php';
 
 ini_set('memory_limit', '-1');
-set_time_limit(120);
+set_time_limit(300);
 
 // Habilitar CORS para as requisições OPTIONS (preflight)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
