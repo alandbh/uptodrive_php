@@ -10,7 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
     header('Access-Control-Allow-Headers: X-Requested-With, Content-Type');
     header('Access-Control-Allow-Credentials: true'); // Se necessário
-    exit(0);
+    // exit(0);
+    return 0;
 }
 
 use Google\Client;
