@@ -13,4 +13,7 @@
 
     # Permitir requisições preflight (OPTIONS)
     Header always set Access-Control-Max-Age "86400"
+
+    php_value upload_max_filesize 800M
+    php_value post_max_size 900M
 </IfModule>
