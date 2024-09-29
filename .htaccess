@@ -2,8 +2,9 @@
     RewriteEngine On
 
     # Evita redirecionamentos para HTTPS nas requisições OPTIONS
-    RewriteCond %{REQUEST_METHOD} OPTIONS
-    RewriteRule ^(.*)$ $1 [R=200,L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^uptodrive$ /uptodrive/ [R=301,L]
+
 
     # Habilita CORS para todas as origens
     Header always set Access-Control-Allow-Origin "*"
