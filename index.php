@@ -6,7 +6,8 @@ set_time_limit(300);
 
 // Habilitar CORS para as requisições OPTIONS (preflight)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    header('Access-Control-Allow-Origin: http://localhost:3003');
+    // header('Access-Control-Allow-Origin: http://localhost:3003');
+    header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
     header('Access-Control-Allow-Headers: X-Requested-With, Content-Type');
     header('Access-Control-Allow-Credentials: true'); // Se necessário
@@ -35,7 +36,7 @@ $service = new Google_Service_Drive($client);
 
 // Upload de arquivo
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
-    header('Access-Control-Allow-Origin: http://localhost:3003');
+    header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
     header('Access-Control-Allow-Headers: X-Requested-With, Content-Type');
     header('Access-Control-Allow-Credentials: true'); // Se necessário
