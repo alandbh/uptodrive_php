@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
         'parents' => [$folderId]
     ]);
 
-    print_r( $fileMetadata);
+    // print_r( $fileMetadata);
 
     $content = file_get_contents($fileTmpPath);
 
