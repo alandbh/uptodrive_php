@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
         'parents' => [$folderId]
     ]);
 
-    print_r($_FILES['file']);
+    // print_r($_FILES['file']);
 
     $content = file_get_contents($fileTmpPath);
 
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
     // send the result now
     echo json_encode($result_json);
 
-    echo 'Arquivo enviado: ' . $uploadedFile->id;
+    // echo 'Arquivo enviado: ' . $uploadedFile->id;
 } else {
     echo 'Nenhum arquivo foi enviado.';
 }
