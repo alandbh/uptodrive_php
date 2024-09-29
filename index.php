@@ -3,31 +3,23 @@ require 'vendor/autoload.php';
 
 ini_set('memory_limit', '-1');
 set_time_limit(120);
-header('Access-Control-Allow-Origin: *');
 
-header('Access-Control-Allow-Methods: GET, POST');
-
-header("Access-Control-Allow-Headers: X-Requested-With");
-
+// Habilitar CORS para as requisições OPTIONS (preflight)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+    header('Access-Control-Allow-Headers: X-Requested-With, Content-Type');
+    header('Access-Control-Max-Age: 86400'); // Cache a resposta por um dia
+    exit(0); // Finaliza a requisição OPTIONS
+}
 
 use Google\Client;
-
 
 function authorize() {
     $credentials_path = dirname(__FILE__) . "/credentials.json";
     $client = new Google\Client();
     putenv('GOOGLE_APPLICATION_CREDENTIALS=' . $credentials_path);
     $client->useApplicationDefaultCredentials();
-// $client->useApplicationDefaultCredentials();
-
-
-    // $client = new Client();
-    
-    // Defina o email e a chave privada diretamente ou carregue de variáveis de ambiente
-    // $client->setAuthConfig([
-    //     'client_email' => getenv('CLIENT_EMAIL'),
-    //     'private_key'  => getenv('PRIVATE_KEY')
-    // ]);
     
     $client->setScopes([
         "https://www.googleapis.com/auth/drive.file",
@@ -37,14 +29,22 @@ function authorize() {
     return $client;
 }
 
-
 $client = authorize();
-
-
 $service = new Google_Service_Drive($client);
 
 // Upload de arquivo
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET, POST');
+    header("Access-Control-Allow-Headers: X-Requested-With, Content-Type");
+    header('Content-Type: application/json');
+    header('Access-Control-Max-Age: 86400'); // Cache a resposta por um dia
+
+    // $result_json = array('log' => $_FILES['file'] );
+
+
+    // print_r($_FILES['file']);
+
     $fileTmpPath = $_FILES['file']['tmp_name'];
     $fileName = $_FILES['file']['name'];
     $folderId = $_POST['folder'];
@@ -54,8 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
         'name' => $customName,
         'parents' => [$folderId]
     ]);
-
-    // print_r( $fileMetadata);
 
     $content = file_get_contents($fileTmpPath);
 
@@ -68,19 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
 
     $result_json = array('fileId' => $uploadedFile->id, 'fileName'=> $uploadedFile->name);
 
-
-    // headers to tell that result is JSON
-    header('Content-type: application/json');
-
-    // send the result now
     echo json_encode($result_json);
 
-    // echo 'Arquivo enviado: ' . $uploadedFile->id;
 } else {
     echo 'Nenhum arquivo foi enviado.';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     echo 'Rodando na porta 8000';
-    // echo $credentials_path;
 }
