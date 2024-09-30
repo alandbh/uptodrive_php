@@ -18,4 +18,5 @@
     php_value post_max_size 900M
     php_value max_execution_time 600
     php_value max_input_time 600
+    php_value user_ini.cache_ttl 600
 </IfModule>
