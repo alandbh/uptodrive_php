@@ -76,4 +76,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     echo 'Rodando na porta 8000';
+    phpinfo();
 }
