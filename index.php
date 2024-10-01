@@ -1,7 +1,9 @@
 <?php
-ini_set('MAX_EXECUTION_TIME', '-1');
+ini_set('max_execution_time', '700');
+ini_set('max_input_time', '700');
+ini_set('post_max_size', '970');
 ini_set('memory_limit', '-1');
-set_time_limit(600);
+// set_time_limit(600);
 require 'vendor/autoload.php';
 
 
