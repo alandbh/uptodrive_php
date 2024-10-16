@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
     $fileTmpPath = $_FILES['file']['tmp_name'];
     $fileName = $_FILES['file']['name'];
     $folderId = $_POST['folder'];
-    $customName = $_POST['customName'] ? $_POST['customName'] : $_FILES['file']['name'];
+    $customName = $_POST['customName'] ? $_POST['customName'] . '.' . $_POST['extension'] : $_FILES['file']['name'];
 
     $fileMetadata = new Google_Service_Drive_DriveFile([
         'name' => $customName,
