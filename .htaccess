@@ -9,7 +9,7 @@
     # Redireciona todas as requisições para index.php
     # RewriteCond %{REQUEST_FILENAME} !-f
     # RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php [QSA,L]
+    # RewriteRule ^(.*)$ index.php [QSA,L]
 
     # Habilita CORS para todas as origens
     Header always set Access-Control-Allow-Origin "*"
