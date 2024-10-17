@@ -1,4 +1,8 @@
 <?php
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
 ini_set('max_execution_time', '700');
 ini_set('max_input_time', '700');
 ini_set('post_max_size', '970M');
@@ -8,17 +12,19 @@ require 'vendor/autoload.php';
 
 
 // Habilitar CORS para as requisições OPTIONS (preflight)
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    // header('Access-Control-Allow-Origin: http://localhost:3003');
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-    header('Access-Control-Allow-Headers: X-Requested-With, Content-Type');
-    header('Access-Control-Allow-Credentials: true'); // Se necessário
-    // exit(0);
-    return 0;
-}
+// if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+//     // header('Access-Control-Allow-Origin: http://localhost:3003');
+//     header('Access-Control-Allow-Origin: *');
+//     header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+//     header('Access-Control-Allow-Headers: X-Requested-With, Content-Type');
+//     header('Access-Control-Allow-Credentials: true'); // Se necessário
+//     // exit(0);
+//     return 0;
+// }
 
 use Google\Client;
+use Google\Service\Drive;
+
 
 function authorize() {
     $credentials_path = dirname(__FILE__) . "/credentials.json";
@@ -72,11 +78,100 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
 
     echo json_encode($result_json);
 
-} else {
-    echo 'Nenhum arquivo foi enviado.';
 }
 
+// if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+//     echo 'Rodando na porta 8000';
+//     phpinfo();
+// }
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    echo 'Rodando na porta 8000';
-    phpinfo();
+    header('Content-Type: application/json');
+
 }
+
+// Tratamento da requisição
+
+$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+if ($path === '/listfiles' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    $folderId = $_GET['folder'];
+    $files = listFilesInFolder($folderId);
+    echo json_encode($files);
+}
+
+if ($path === '/listfolders' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    $folderId = $_GET['folder'];
+    try {
+        $authClient = authorize();
+        $response = listFoldersAndSubfolders($authClient, $folderId);
+        echo json_encode($response);
+    } catch (Exception $e) {
+        echo json_encode(['message' => 'error on listing folders', 'error' => $e->getMessage()]);
+    }
+}
+
+
+
+function listFilesInFolder($folderId) {
+    $client = authorize();
+    $service = new Drive($client);
+
+    try {
+        $response = $service->files->listFiles([
+            'q' => "'" . $folderId . "' in parents",
+            'pageSize' => 1000,
+            'fields' => 'nextPageToken, files(id, name)',
+        ]);
+
+        $files = $response->getFiles();
+        if (count($files) > 0) {
+            return $files;
+        } else {
+            return [];
+        }
+    } catch (Exception $e) {
+        echo 'Error: ' . $e->getMessage();
+        return [];
+    }
+}
+
+function listFoldersAndSubfolders($authClient, $parentFolderId) {
+    $drive = new Drive($authClient);
+    $foldersAndSubfolders = [];
+
+    // Listando as pastas do primeiro nível
+    $firstLevelFolders = $drive->files->listFiles([
+        'q' => "'$parentFolderId' in parents and mimeType = 'application/vnd.google-apps.folder'",
+        'pageSize' => 1000,
+        'fields' => 'nextPageToken, files(id, name)'
+    ]);
+
+    foreach ($firstLevelFolders->getFiles() as $folder) {
+        // Listando subpastas de cada pasta do primeiro nível
+        $subfoldersResponse = $drive->files->listFiles([
+            'q' => "'{$folder->getId()}' in parents and mimeType = 'application/vnd.google-apps.folder'",
+            'pageSize' => 1000,
+            'fields' => 'nextPageToken, files(id, name)'
+        ]);
+
+        $subfolders = [];
+        foreach ($subfoldersResponse->getFiles() as $subfolder) {
+            $subfolders[] = [
+                'id' => $subfolder->getId(),
+                'name' => $subfolder->getName(),
+                'type' => 'journey'
+            ];
+        }
+
+        $foldersAndSubfolders[] = [
+            'name' => $folder->getName(),
+            'id' => $folder->getId(),
+            'type' => 'player',
+            'subfolders' => $subfolders
+        ];
+    }
+
+    return $foldersAndSubfolders;
+}
+?>
