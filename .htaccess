@@ -6,11 +6,6 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^uptodrive$ /uptodrive/ [R=301,L]
 
-    # Redireciona todas as requisições para index.php
-    # RewriteCond %{REQUEST_FILENAME} !-f
-    # RewriteCond %{REQUEST_FILENAME} !-d
-    # RewriteRule ^(.*)$ index.php [QSA,L]
-
     # Habilita CORS para todas as origens
     Header always set Access-Control-Allow-Origin "*"
     Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS"

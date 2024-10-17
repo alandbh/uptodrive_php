@@ -94,24 +94,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-if ($path === '/listfiles' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $whatToList = $_GET['list'];
     $folderId = $_GET['folder'];
-    $files = listFilesInFolder($folderId);
-    echo json_encode($files);
-    exit;
+
+    // echo json_encode($whatToList);
+
+    if ($whatToList === 'files') {
+        $files = listFilesInFolder($folderId);
+        echo json_encode($files);
+        exit;
+        
+    } elseif($whatToList === 'folders') {
+
+        try {
+            $authClient = authorize();
+            $response = listFoldersAndSubfolders($authClient, $folderId);
+            echo json_encode($response);
+        } catch (Exception $e) {
+            echo json_encode(['message' => 'error on listing folders', 'error' => $e->getMessage()]);
+        }
+        exit;
+
+    } else {
+        echo json_encode(['message' => 'invalid endpoint']);
+    }
 }
 
-if ($path === '/listfolders' && $_SERVER['REQUEST_METHOD'] === 'GET') {
-    $folderId = $_GET['folder'];
-    try {
-        $authClient = authorize();
-        $response = listFoldersAndSubfolders($authClient, $folderId);
-        echo json_encode($response);
-    } catch (Exception $e) {
-        echo json_encode(['message' => 'error on listing folders', 'error' => $e->getMessage()]);
-    }
-    exit;
-}
+// if ($path === '/listfolders' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+//     $folderId = $_GET['folder'];
+    
+// }
 
 
 
