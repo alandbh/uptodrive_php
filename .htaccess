@@ -1,0 +1,27 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Evita redirecionamentos para HTTPS nas requisições OPTIONS
+    # RewriteCond %{REQUEST_FILENAME} !-f
+    # RewriteCond %{REQUEST_FILENAME} !-d
+    # RewriteRule ^uptodrive$ /uptodrive/ [R=301,L]
+
+    # Redireciona todas as requisições para index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [QSA,L]
+
+    # Habilita CORS para todas as origens
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header always set Access-Control-Allow-Headers "X-Requested-With, Content-Type, cache-control"
+
+    # Permitir requisições preflight (OPTIONS)
+    Header always set Access-Control-Max-Age "86400"
+
+    php_value upload_max_filesize 800M
+    php_value post_max_size 900M
+    php_value max_execution_time 600
+    php_value max_input_time 600
+    php_value user_ini.cache_ttl 600
+</IfModule>
