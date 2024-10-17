@@ -98,6 +98,7 @@ if ($path === '/listfiles' && $_SERVER['REQUEST_METHOD'] === 'GET') {
     $folderId = $_GET['folder'];
     $files = listFilesInFolder($folderId);
     echo json_encode($files);
+    exit;
 }
 
 if ($path === '/listfolders' && $_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -109,7 +110,9 @@ if ($path === '/listfolders' && $_SERVER['REQUEST_METHOD'] === 'GET') {
     } catch (Exception $e) {
         echo json_encode(['message' => 'error on listing folders', 'error' => $e->getMessage()]);
     }
+    exit;
 }
+
 
 
 
