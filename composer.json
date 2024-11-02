@@ -7,8 +7,11 @@
         }
     },
     "scripts": {
-        "pre-autoload-dump": "Google\\Task\\Composer::cleanup",
-        "dev": "php -S localhost:8000 -t ."
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php -S localhost:8000 -t ."
+        ],
+        "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
     },
     "extra": {
         "google/apiclient-services": [
