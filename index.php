@@ -71,19 +71,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
         'data' => $content,
         'mimeType' => mime_content_type($fileTmpPath),
         'uploadType' => 'multipart',
-        'fields' => 'id, name',
+        'fields' => 'id, name, webViewLink',  // Added webViewLink to get the URL
     ]);
 
-    $result_json = array('fileId' => $uploadedFile->id, 'fileName'=> $uploadedFile->name);
+    $result_json = array(
+        'fileId' => $uploadedFile->id, 
+        'fileName'=> $uploadedFile->name,
+        'fileUrl' => $uploadedFile->webViewLink  // Include the URL in response
+    );
 
     echo json_encode($result_json);
 
 }
-
-// if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-//     echo 'Rodando na porta 8000';
-//     phpinfo();
-// }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     header('Content-Type: application/json');
@@ -121,14 +120,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 }
 
-// if ($path === '/listfolders' && $_SERVER['REQUEST_METHOD'] === 'GET') {
-//     $folderId = $_GET['folder'];
-    
-// }
+function renameFile($fileId, $newName) {
+    // $client = authorize();
+    // $service = new Drive($client);
 
+    try {
+        $fileMetadata = new DriveFile([
+            'name' => $newName
+        ]);
 
+        $updatedFile = $service->files->update($fileId, $fileMetadata, [
+            'fields' => 'id, name'
+        ]);
 
-
+        return [
+            'fileId' => $updatedFile->id,
+            'fileName' => $updatedFile->name
+        ];
+    } catch (Exception $e) {
+        return [
+            'error' => true,
+            'message' => $e->getMessage()
+        ];
+    }
+}
 function listFilesInFolder($folderId) {
     $client = authorize();
     $service = new Drive($client);
