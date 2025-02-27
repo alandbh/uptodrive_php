@@ -27,7 +27,7 @@ use Google\Service\Drive;
 
 
 function authorize() {
-    $credentials_path = dirname(__FILE__) . "/credentials2.json";
+    $credentials_path = dirname(__FILE__) . "/credentials.json";
     $client = new Google\Client();
     putenv('GOOGLE_APPLICATION_CREDENTIALS=' . $credentials_path);
     $client->useApplicationDefaultCredentials();
