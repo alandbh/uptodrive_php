@@ -1,4 +1,5 @@
 .env
 /vendor
 credentials.json
+credentials2.json
 *.bkp
